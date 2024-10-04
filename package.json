@@ -1,0 +1,61 @@
+{
+	"name": "gradio-client-lite",
+	"description": "A zero-dependency, platform-independent, and lightweight Gradio client.",
+	"keywords": [
+		"gradio"
+	],
+	"author": "JacobLinCool <jacoblincool@gmail.com> (https://github.com/JacobLinCool)",
+	"license": "MIT",
+	"version": "0.0.0",
+	"homepage": "https://github.com/JacobLinCool/gradio-client-lite",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/JacobLinCool/gradio-client-lite"
+	},
+	"bugs": {
+		"url": "https://github.com/JacobLinCool/gradio-client-lite/issues"
+	},
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"prepare": "husky",
+		"build": "tsup",
+		"format": "prettier --ignore-path .gitignore --write .",
+		"changeset": "changeset",
+		"build:docs": "typedoc --out docs src/index.ts",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@changesets/changelog-github": "^0.5.0",
+		"@changesets/cli": "^2.27.9",
+		"@types/node": "^22.7.4",
+		"@types/node-wav": "^0.0.3",
+		"husky": "^9.1.6",
+		"lint-staged": "^15.2.10",
+		"prettier": "^3.3.3",
+		"tsup": "^8.3.0",
+		"tsx": "^4.19.1",
+		"typedoc": "^0.26.7",
+		"typescript": "^5.6.2",
+		"vitest": "^2.1.2"
+	},
+	"lint-staged": {
+		"*.{ts,js,json,yaml,yml}": [
+			"prettier --write"
+		]
+	},
+	"packageManager": "pnpm@9.11.0"
+}
