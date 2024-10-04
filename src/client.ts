@@ -18,8 +18,16 @@ export class GradioClientLite<S extends Space = Space> {
 	/**
 	 * Creates a new GradioClientLite instance.
 	 * @param host - The host URL of the Gradio Space.
+	 * @param headers - Additional headers to include in requests.
 	 */
-	constructor(public readonly host: string) {}
+	constructor(
+		public readonly host: string,
+		private readonly headers: Record<string, string> = {},
+	) {}
+
+	private getHeaders(additionalHeaders: Record<string, string> = {}): Record<string, string> {
+		return { ...net.headers, ...this.headers, ...additionalHeaders };
+	}
 
 	/**
 	 * Submits data to a Gradio endpoint.
@@ -31,9 +39,9 @@ export class GradioClientLite<S extends Space = Space> {
 	public async submit(endpoint: Endpoint, data: unknown[]): Promise<string> {
 		const submission = await net.fetch(`${this.host}/call${endpoint}`, {
 			method: "POST",
-			headers: {
+			headers: this.getHeaders({
 				"Content-Type": "application/json",
-			},
+			}),
 			body: JSON.stringify({ data }),
 		});
 		console.log(submission.status);
@@ -52,7 +60,9 @@ export class GradioClientLite<S extends Space = Space> {
 	 * @returns The streamed result.
 	 */
 	public async stream<T = unknown>(endpoint: Endpoint, event_id: string): Promise<T> {
-		const stream = await net.fetch(`${this.host}/call${endpoint}/${event_id}`);
+		const stream = await net.fetch(`${this.host}/call${endpoint}/${event_id}`, {
+			headers: this.getHeaders(),
+		});
 		console.log("stream status", stream.status);
 		const data = await readSSE(stream, "complete", 1);
 		console.log("stream data", data);
@@ -77,20 +87,26 @@ export class GradioClientLite<S extends Space = Space> {
 	 * @returns The response containing the file.
 	 */
 	public async download(path: string): Promise<Response> {
-		return net.fetch(`${this.host}/file=${path}`);
+		return net.fetch(`${this.host}/file=${path}`, {
+			headers: this.getHeaders(),
+		});
 	}
 
 	/**
 	 * Creates a new GradioClientLite instance connected to a specific Hugging Face Space.
 	 * @param space - The identifier of the Hugging Face Space.
+	 * @param headers - Additional headers to include in requests.
 	 * @returns A new GradioClientLite instance.
 	 */
-	public static async connect<S extends Space>(space: S): Promise<GradioClientLite<S>> {
+	public static async connect<S extends Space>(
+		space: S,
+		headers: Record<string, string> = {},
+	): Promise<GradioClientLite<S>> {
 		const [user, repo] = space.split("/");
 		const replica = await resolveReplica(user, repo);
 		const slug = slugify(user, repo);
 		const host = `https://${slug}.hf.space/--replicas/${replica}`;
 		console.log({ host });
-		return new GradioClientLite(host);
+		return new GradioClientLite(host, headers);
 	}
 }

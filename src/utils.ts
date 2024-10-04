@@ -63,9 +63,14 @@ export async function readSSE(res: Response, event: string, count: number): Prom
  * Resolves a replica for a given Hugging Face Space.
  * @param user - The username of the Space owner.
  * @param repo - The name of the Space repository.
+ * @param headers - Additional headers to include in the request.
  * @returns The resolved replica URL or undefined if not found.
  */
-export async function resolveReplica(user: string, repo: string): Promise<string | undefined> {
+export async function resolveReplica(
+	user: string,
+	repo: string,
+	headers: Record<string, string> = {},
+): Promise<string | undefined> {
 	try {
 		const cacheKey = `${user}-${repo}`;
 		const cached = replicaCache[cacheKey];
@@ -74,7 +79,7 @@ export async function resolveReplica(user: string, repo: string): Promise<string
 		}
 
 		const url = `https://api.hf.space/v1/${user}/${repo}/live-metrics/sse`;
-		const res = await net.fetch(url);
+		const res = await net.fetch(url, { headers: { ...net.headers, ...headers } });
 		if (!res.ok) {
 			throw new Error(`Failed to fetch replica: ${res.statusText}`);
 		}
