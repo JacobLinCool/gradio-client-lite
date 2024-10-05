@@ -1,5 +1,11 @@
 # gradio-client-lite
 
+## 0.1.1
+
+### Patch Changes
+
+-   [`0616b2e`](https://github.com/JacobLinCool/gradio-client-lite/commit/0616b2eed85e9ed3f4a253a02b52efcb1af7401c) Thanks [@JacobLinCool](https://github.com/JacobLinCool)! - Bind fetch with globalThis
+
 ## 0.1.0
 
 ### Minor Changes
